@@ -20,12 +20,6 @@
         error = false;
         formErrors = {}
         errorMessage = ''
-        
-        // if (!email || !password || (register && !confirmPassword)) {
-        //     error = true
-        //     return;
-        // }
-        //authenticating = true
 
         try {
             if (register) {
@@ -54,7 +48,7 @@
             authenticating = false;
             return;
         }
-        authenticating = false;
+        authenticating = true;
     }
 
     function handleRegister () {

@@ -11,10 +11,13 @@
     let error = ''
     let userName = ''
     let errorMessage = writable('')
+    let loggingOut = false
 
     authStore.subscribe((current) => {
-        todoList = current.data.todos
-        userName = current.user?.displayName || 'User'; // Assuming displayName stores the user's name
+        if (!loggingOut) {
+            todoList = current.data.todos;
+            userName = current.user?.displayName || 'User';
+        }
     })
 
     async function addTodo() {
@@ -59,6 +62,11 @@
             console.log("There was an error saving your information")
         }
     }
+
+    function handleLogout() {
+        loggingOut = true;
+        authHandlers.logout();
+    }
 </script>
 
 {#if !$authStore.loading}
@@ -67,7 +75,7 @@
             <h1>{userName}'s Todo List</h1>
             <div class="headerButtons">
                 <button on:click={saveTodos}><i class="fa-solid fa-floppy-disk"></i><p>Save</p></button>
-                <button on:click={authHandlers.logout}><i class="fa-solid fa-right-from-bracket"></i><p>Logout</p></button>
+                <button on:click={handleLogout}><i class="fa-solid fa-right-from-bracket"></i><p>Logout</p></button>
             </div>
         </div>
 
@@ -179,10 +187,6 @@
         border: 1px solid #0891b2;
         border-radius: 4px;
         overflow: hidden;
-    }
-
-    .errorBorder {
-        border-color: coral !important;
     }
 
     .enterTodo input {
