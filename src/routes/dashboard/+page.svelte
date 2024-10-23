@@ -1,18 +1,19 @@
 <script>
-	import { doc, setDoc } from "firebase/firestore";
-    import { authHandlers, authStore } from "../../store/store";
+	import { doc, setDoc } from "firebase/firestore"; //  functions from Firebase Firestore used to create references to documents and set document data in the Firestore database
+    import { authHandlers, authStore } from "../../store/store"; // authHandlers and authStore manage user authentication and hold user data.
 	import { db } from "../../lib/firebase/firebase";
     import { AddSchema } from '../../lib/yup/index'
-    import { writable } from 'svelte/store'
+    import { writable } from 'svelte/store' // writable is a Svelte store that allows you to create reactive state variables.
     import tippy from '../../lib/actions/tippy'
 
-    let todoList = []
+    let todoList = [] // store the current user's todo items
     let currentTodo = ''
     let error = ''
-    let userName = ''
-    let errorMessage = writable('')
-    let loggingOut = false
+    let userName = '' // hold the authenticated user's display name
+    let errorMessage = writable('') // A writable store for managing error messages from validation.
+    let loggingOut = false // track if the user is in the process of logging out.
 
+    // subscribes to changes in the authStore. Whenever the authentication state changes, it updates the todoList with the current user's todos and sets the userName based on the authenticated user
     authStore.subscribe((current) => {
         if (!loggingOut) {
             todoList = current.data.todos;
@@ -25,26 +26,29 @@
             await AddSchema.validate({ addTodo: currentTodo });
             errorMessage.set(''); // Clear error if validation passes
 
-            todoList = [...todoList, currentTodo];
-            currentTodo = '';
+            todoList = [...todoList, currentTodo]; // it adds currentTodo to todoList
+            currentTodo = ''; // clears currentTodo for the next input.
         } catch (validationError) {
             errorMessage.set(validationError.message); // Display validation error
         }
     }
 
+    // allow the user to edit a todo item by setting it to currentTodo.
     function editTodo(index) {
-        let newTodoList = todoList.filter((value, index) => {
-            return index != index
-        })
-        currentTodo = todoList[index]
-        todoList = newTodoList
+        currentTodo = todoList[index]; // Get the todo item to edit
+
+        // Create a new array without the item at the specified index
+        todoList = todoList.filter((_, i) => i !== index);
     }
 
-    function removeTodo() {
-        let newTodoList = todoList.filter((value, index) => {
-            return index != index
-        })
-        todoList = newTodoList
+    // Removes and Creates a new array without the item at the specified index
+    function removeTodo(index) {
+        const confirmed = confirm("Are you sure you want to delete this todo?");
+
+        if (confirmed) {
+            // If the user confirms, proceed with the deletion
+            todoList = todoList.filter((_, i) => i !== index);
+        }
     }
 
     async function saveTodos() {
@@ -55,9 +59,9 @@
                 {
                     todos: todoList,
                 },
-                {merge: true}
+                {merge: true} // avoid overwriting existing data
             )
-            alert("Todo saved!")
+            alert("Todo List Saved!")
         } catch (error) {
             console.log("There was an error saving your information")
         }
@@ -69,6 +73,7 @@
     }
 </script>
 
+<!-- The entire interface is only rendered if the authentication store is not loading. -->
 {#if !$authStore.loading}
     <div class="mainContainer">
         <div class="headerContainer">

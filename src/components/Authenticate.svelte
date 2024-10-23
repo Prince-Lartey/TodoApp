@@ -1,18 +1,21 @@
 <script>
-	import { authHandlers } from "../store/store";
-    import { RegisterSchema, LoginSchema } from '../lib/yup/index';
+	import { authHandlers } from "../store/store"; // contains methods for handling authentication
+    import { RegisterSchema, LoginSchema } from '../lib/yup/index'; // validation schemas created with Yup for validating the registration and login forms.
 
+    // holds the input values from the user
     let name = ''
     let email = ''
     let password = ''
     let confirmPassword = ''
+
     let error = false
-    let register = false
-    let authenticating = false
-    let formErrors = {}
-    let errorMessage = ''
+    let register = false // toggle between registration and login forms
+    let authenticating = false // indicate if a signup/login process is in progress
+    let formErrors = {} // object to store validation errors for each field
+    let errorMessage = '' // store general error message
 
     async function handleAuthentication () {
+        // checks if an authentication process is already ongoing
         if (authenticating) {
             return
         }
@@ -51,7 +54,8 @@
         authenticating = true;
     }
 
-    function handleRegister () {
+    // Switching between login and registration modes. It also resets all input fields and error messages when switching modes.
+    function Toggle () {
         register = !register
         name = '';
         email = '';
@@ -120,12 +124,12 @@
         {#if register}
             <div>
                 <p>Already have an account?</p>
-                <p on:click={handleRegister} on:keydown={() => {}}>Login</p>
+                <p on:click={Toggle} on:keydown={() => {}}>Login</p>
             </div>
         {:else}
             <div>
                 <p>Don't have an account?</p>
-                <p on:click={handleRegister} on:keydown={() => {}}>Register</p>
+                <p on:click={Toggle} on:keydown={() => {}}>Register</p>
             </div>
         {/if}
     </div>

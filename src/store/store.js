@@ -1,13 +1,17 @@
+// Handling user authentication in a Svelte application using Firebase.
+
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile } from "firebase/auth";
-import { writable } from "svelte/store";
+import { writable } from "svelte/store"; // To create a reactive store that can hold and update data.
 import { auth } from "../lib/firebase/firebase";
 
+// defines a Svelte writable store
 export const authStore = writable({
     user: null,
     loading: true,
     data: {}
 })
 
+// methods for user authentication
 export const authHandlers = {
     signup: async (email, password, name) => {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password)
