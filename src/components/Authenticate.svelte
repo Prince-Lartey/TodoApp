@@ -238,6 +238,10 @@
         gap: 4px;
     }
 
+    .options div p:last-of-type:hover {
+        text-decoration: underline
+    }
+
     .options > p {
         position: relative;
         text-align: center;
